@@ -4,6 +4,37 @@ pluginManagement {
     google()
   }
 }
+
+gradle.beforeProject { Project project ->
+  // https://youtrack.jetbrains.com/issue/KT-64627
+  // Defaults here:
+  // https://github.com/JetBrains/kotlin/blob/v1.9.20/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/kapt/Kapt3KotlinGradleSubplugin.kt#L202-L211
+  // and
+  // https://github.com/JetBrains/kotlin/blob/v1.9.20/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/kapt/Kapt3KotlinGradleSubplugin.kt#L117-L120
+  project.ext.set('kapt.dont.warn.annotationProcessor.dependencies', true)
+  project.ext.set('kapt.classloaders.cache.disableForProcessors', '')
+  project.ext.set('kapt.classloaders.cache.size', 0)
+  project.ext.set('kapt.use.k2', false)
+  project.ext.set('kapt.info.as.warnings', false)
+  project.ext.set('kapt.keep.kdoc.comments.in.stubs', true)
+  project.ext.set('kapt.use.jvm.ir', true)
+  project.ext.set('kapt.verbose', false)
+  project.ext.set('kapt.incremental.apt', true)
+  project.ext.set('kapt.include.compile.classpath', true)
+
+
+  project.plugins.withId("com.android.library") {
+    project.android.composeOptions.kotlinCompilerExtensionVersion = "1.5.4"
+    project.android.lint.checkReleaseBuilds = false
+    project.android.namespace = "pkg.android" + project.path.replace(":", ".")
+  }
+  project.plugins.withId("com.android.application") {
+    project.android.composeOptions.kotlinCompilerExtensionVersion = "1.5.4"
+    project.android.lint.checkReleaseBuilds = false
+    project.android.namespace = "pkg.android" + project.path.replace(":", ".")
+  }
+}
+
 include ':module01:module01'
 include ':module01:module03'
 include ':module01:module10'
